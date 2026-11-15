@@ -1,13 +1,14 @@
 import { Hono } from 'hono';
 import { loadConfig, type RigConfig } from './config.js';
-import type { ReadNight } from './digest/types.js';
 import { lane } from './lane.js';
 import { readStatus } from './status.js';
+import { readNight as realReadNight } from './digest/read.js';
+import type { ReadNight } from './digest/types.js';
+import { DigestPage } from './views/digest.js';
 import { Layout } from './views/layout.js';
 import { StatusBoard } from './views/status.js';
 
-// readNight is injected: its implementation (src/digest/read.ts) is another issue's work.
-export function createApp(config: RigConfig = loadConfig(), opts: { readNight?: ReadNight } = {}) {
+export function createApp(config: RigConfig = loadConfig(), readNight: ReadNight = realReadNight) {
   const app = new Hono();
 
   app.get('/health', (c) => c.json({ ok: true, lane: lane().id }));
@@ -20,12 +21,23 @@ export function createApp(config: RigConfig = loadConfig(), opts: { readNight?: 
     ),
   );
 
+  app.get('/digest/:night', (c) => {
+    const param = c.req.param('night');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(param)) return c.notFound();
+    const night = readNight(config.runsDir, param);
+    if (!night) return c.notFound();
+    return c.html(
+      <Layout title={`digest ${night.night}`} lane={lane()}>
+        <DigestPage night={night} />
+      </Layout>,
+    );
+  });
+
   // Same Night from readNight() as the page: rows are passed through, never re-sorted or filtered.
   app.get('/api/digest/:night', (c) => {
     const name = c.req.param('night');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(name)) return c.json({ error: 'no such night' }, 404);
-    if (!opts.readNight) return c.json({ error: 'digest not available' }, 503);
-    const night = opts.readNight(config.runsDir, name);
+    const night = readNight(config.runsDir, name);
     if (!night) return c.json({ error: 'no such night' }, 404);
     return c.json(night);
   });
