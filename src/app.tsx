@@ -2,12 +2,13 @@ import { Hono } from 'hono';
 import { loadConfig, type RigConfig } from './config.js';
 import { lane } from './lane.js';
 import { readStatus } from './status.js';
+import { readNight as realReadNight } from './digest/read.js';
 import type { ReadNight } from './digest/types.js';
 import { DigestPage } from './views/digest.js';
 import { Layout } from './views/layout.js';
 import { StatusBoard } from './views/status.js';
 
-export function createApp(config: RigConfig = loadConfig(), readNight?: ReadNight) {
+export function createApp(config: RigConfig = loadConfig(), readNight: ReadNight = realReadNight) {
   const app = new Hono();
 
   app.get('/health', (c) => c.json({ ok: true, lane: lane().id }));
@@ -23,7 +24,7 @@ export function createApp(config: RigConfig = loadConfig(), readNight?: ReadNigh
   app.get('/digest/:night', (c) => {
     const param = c.req.param('night');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(param)) return c.notFound();
-    const night = readNight?.(config.runsDir, param);
+    const night = readNight(config.runsDir, param);
     if (!night) return c.notFound();
     return c.html(
       <Layout title={`digest ${night.night}`} lane={lane()}>
