@@ -24,13 +24,14 @@ describe('status board', () => {
     expect(html).toContain('2026-10-28');
   });
 
-  it('links a night to its digest with ok / retry / fail counts', async () => {
+  it('links both nights to their digest, with counts for the readable one', async () => {
     const html = await (await createApp(config, read).request('/')).text();
+    expect(html).toContain('href="/digest/2026-10-27"');
     expect(html).toContain('href="/digest/2026-10-28"');
     expect(html).toContain('ok 2 · retry 1 · fail 1');
   });
 
-  it('renders — for a night that cannot be read', async () => {
+  it('renders — for 2026-10-27, the night the reader cannot read', async () => {
     const html = await (await createApp(config, read).request('/')).text();
     expect(html).toMatch(/2026-10-27<\/a>\s*—/);
   });
