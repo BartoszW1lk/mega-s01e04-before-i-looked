@@ -18,7 +18,7 @@ export function DigestPage({ night }: { night: Night }) {
             <tr><th>job</th><th>owner</th><th>runs</th><th>retries</th><th>last status</th><th>last error</th><th>first</th><th>last</th></tr>
           </thead>
           <tbody>
-            {night.rows.map((r) => (
+            {[...night.rows].sort((a, b) => (a.job < b.job ? -1 : a.job > b.job ? 1 : 0)).map((r) => (
               <tr class={marked(r) ? 'warn' : undefined}>
                 <td>{marked(r) ? '! ' : ''}{r.job}</td>
                 <td>{r.owner ?? dash}</td>

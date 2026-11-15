@@ -21,7 +21,9 @@ export function createApp(config: RigConfig = loadConfig(), readNight?: ReadNigh
   );
 
   app.get('/digest/:night', (c) => {
-    const night = readNight?.(config.runsDir, c.req.param('night'));
+    const param = c.req.param('night');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(param)) return c.notFound();
+    const night = readNight?.(config.runsDir, param);
     if (!night) return c.notFound();
     return c.html(
       <Layout title={`digest ${night.night}`} lane={lane()}>
