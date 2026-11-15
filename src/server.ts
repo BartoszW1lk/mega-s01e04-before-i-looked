@@ -6,7 +6,8 @@ import { startBeating } from './heartbeat.js';
 import { lane } from './lane.js';
 
 const config = loadConfig();
-// TODO(#1): replace with `import { readNight } from './digest/read.js'` once it exists; until then every count is —.
+// TODO(#4): src/digest/read.ts is on main (1ca3627), not on this branch. Once main is merged in, drop this
+// stub and let createApp default to the real reader. Until then every count on the live board is —.
 const readNight: ReadNight = () => null;
 const port = Number(process.env.PORT ?? 8787);
 

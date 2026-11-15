@@ -31,7 +31,8 @@ describe('status board', () => {
     expect(html).toContain('ok 2 · retry 1 · fail 1');
   });
 
-  it('renders — for 2026-10-27, the night the reader cannot read', async () => {
+  // The stub reader returns null for 2026-10-27 (the real file is readable); this covers the null path only.
+  it('renders — for a night the injected reader returns null for', async () => {
     const html = await (await createApp(config, read).request('/')).text();
     expect(html).toMatch(/2026-10-27<\/a>\s*—/);
   });
