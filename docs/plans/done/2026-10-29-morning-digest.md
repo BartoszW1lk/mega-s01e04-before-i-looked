@@ -1,8 +1,9 @@
 ---
 plan: morning-digest
-status: ready
+status: done
 owner: rook
 opened: 2026-10-29
+closed: 2026-11-16
 ---
 
 # Morning digest
@@ -77,3 +78,19 @@ page again with `LANE_MARKER` unset (the banner reads "no marker set") and uploa
 link. Move this plan to `docs/plans/done/` with its issue list.
 
 Done when: the preview link no longer shows the lane marker.
+
+## Issues
+
+| # | Issue | Blocked by | Worker | Closed |
+|---|-------|-----------|--------|--------|
+| 1 | Run log reader | — | claude-code · claude-opus-5-5 · high | 2026-11-16 |
+| 2 | Digest page | #1 | claude-code · claude-sonnet-5-5 · low | 2026-11-16 |
+| 3 | Digest JSON | #1 | claude-code · claude-sonnet-5-5 · medium | 2026-11-16 |
+| 4 | Board link | #1 | claude-code · claude-sonnet-5-5 · medium | 2026-11-16 |
+| 5 | Route tests | #1, #2, #3 | claude-code · claude-haiku-5-5 · low | 2026-11-16 |
+| 6 | Preview for review | #1–#5 | claude-code · claude-opus-5-5 · Coordinator | 2026-11-16 |
+| 7 | Clean up | #6, review | claude-code · claude-opus-5-5 · Coordinator | 2026-11-16 |
+
+#3 and #4 started from a main that had only `src/digest/types.ts`. Their "Done when" needs the page (2a), so
+neither could hold until main was merged into their branches; then each passed on one more run. #6 was first
+closed when the link was sent and reopened: the review was not in yet. It closed once the reviewer had seen it.
