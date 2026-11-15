@@ -25,13 +25,13 @@ export function nightsOnDisk(runsDir: string): string[] {
   }
 }
 
-export function readStatus(config: RigConfig, read?: ReadNight): Status {
+export function readStatus(config: RigConfig, read: ReadNight): Status {
   const nights = nightsOnDisk(config.runsDir);
   return {
     adapter: config.adapter,
     installed: config.installed,
     lastBeat: lastBeat(),
     nights,
-    counts: Object.fromEntries(nights.map((n) => [n, read ? countsFor(read, config.runsDir, n) : null])),
+    counts: Object.fromEntries(nights.map((n) => [n, countsFor(read, config.runsDir, n)])),
   };
 }
